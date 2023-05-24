@@ -104,6 +104,43 @@ func TestMergeFilesOrderByFirstInput(t *testing.T) {
 	assertResultFile(t, result, expected)
 }
 
+func TestMergeFilesThreeInputs(t *testing.T) {
+	input1 := [][]string{
+		{"name", "id", "age"},
+		{"John", "1", "20"},
+		{"Jane", "2", "21"},
+		{"Jack", "3", "22"},
+	}
+
+	input2 := [][]string{
+		{"city", "country", "id"},
+		{"Warsaw", "Poland", "2"},
+		{"Washington", "USA", "3"},
+		{"Tokyo", "Japan", "1"},
+	}
+
+	input3 := [][]string{
+		{"job", "id"},
+		{"programmer", "1"},
+		{"manager", "2"},
+		{"CEO", "3"},
+	}
+
+	expected := [][]string{
+		{"id", "name", "age", "city", "country", "job"},
+		{"1", "John", "20", "Tokyo", "Japan", "programmer"},
+		{"2", "Jane", "21", "Warsaw", "Poland", "manager"},
+		{"3", "Jack", "22", "Washington", "USA", "CEO"},
+	}
+
+	result, err := MergeFiles([][][]string{input1, input2, input3}, "id")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	assertResultFile(t, result, expected)
+}
+
 func assertResultFile(t *testing.T, result [][]string, expected [][]string) {
 	if len(result) != len(expected) {
 		t.Errorf("expected %d rows, got %d", len(expected), len(result))
