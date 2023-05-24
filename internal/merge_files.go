@@ -5,6 +5,10 @@ import "fmt"
 
 func MergeFiles(files [][][]string, joinColumn string) ([][]string, error) {
 	
+	if len(files) == 0 {
+		return nil, fmt.Errorf("attempt to merge empty array of files")
+	}
+
 	columns := []string{joinColumn}
 
 	rowsByJoinKey := make(map[string][]string)
@@ -18,7 +22,7 @@ func MergeFiles(files [][][]string, joinColumn string) ([][]string, error) {
 		fileColumns := file[0]		
 		joinColumnIndex, err := IndexOf(fileColumns, joinColumn)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("join column not found in the file. error: %v", err) 
 		}
 		
 		fileDataColumns := ExcludeIndex(fileColumns, joinColumnIndex)
